@@ -1,4 +1,4 @@
-== mini_feed
+# mini_feed
 
 A DSL for creating feed events in a web two-point-oh style kind of thing...
 
@@ -22,6 +22,6 @@ a :title attribute that happens to be "look ma no hands", in here
 
 the feed body will end up like "message sent with title: look ma no hands".
 
-== Usage
+# Usage
 
 Just run rake mini_feeds:run_migrations before you start. Then follow the example above.
