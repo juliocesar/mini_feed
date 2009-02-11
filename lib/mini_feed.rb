@@ -26,14 +26,22 @@ module Feed
       self.instance_eval &block      
     end
         
-    def after(*args)
-      options = args.last
-      @callbacks["after_#{args.first}".to_sym] = Proc.new do |record|
-        body = in_ur_colonz(options[:like], record)
-        FeedEntry.create :body => body, :owner => record
-      end
+    def after(event, options = {})
+      assign_callback('after', event, options)
     end
     
+    def before(event, options = {})
+      assign_callback('before', event, options)
+    end
+    
+    protected
+    def assign_callback(before_or_after, event, options = {})
+      @callbacks["#{before_or_after}_#{event}".to_sym] = Proc.new do |record|
+        body = in_ur_colonz(options[:like], record)
+        FeedEntry.create :body => body, :owner => record
+      end            
+    end
+
     def in_ur_colonz(text, something)
       text.gsub(/\:(\w+)/) { something.send($1) }  #  :-O
     end
