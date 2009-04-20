@@ -3,7 +3,7 @@ module Feed
   def self.included(base)
     base.extend ClassMethods
     base.class_eval do
-      has_many :feed_entries, :as => :owner
+      has_many :feed_entries, :as => :about
     end
   end
   
@@ -14,11 +14,12 @@ module Feed
       feeder.callbacks.each do |method, proc|
         send(method, &proc)
       end  
-    end
+    end    
     
   end
   
   class Feeder
+        
     attr_accessor :callbacks
     
     def initialize(&block)
@@ -38,12 +39,12 @@ module Feed
     def assign_callback(before_or_after, event, options = {})
       @callbacks["#{before_or_after}_#{event}".to_sym] = Proc.new do |record|
         body = in_ur_colonz(options[:like], record)
-        FeedEntry.create :body => body, :owner => record
+        FeedEntry.create :body => body, :owner => record.send(options[:owner]), :about => record
       end            
     end
 
     def in_ur_colonz(text, something)
-      text.gsub(/\:(\w+)/) { something.send($1) }  #  :-O
+      text.gsub(/\:(\w+[.\w]+)/) { something.instance_eval $1 }  # \m/
     end
             
   end
